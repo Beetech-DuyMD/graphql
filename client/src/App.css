@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  @apply text-primary;
+}
+h4 {
+  @apply text-2xl !important;
+}
+h3 {
+  @apply text-3xl !important;
+}
+h1 {
+  @apply text-4xl font-bold !important;
+}
