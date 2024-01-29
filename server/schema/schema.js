@@ -16,14 +16,14 @@ const typeDefs = gql`
   }
 
   input BookParam {
-    id: ID!
+    id: ID
     name: String
     gengre: String
     authorId: ID
   }
 
   input AuthorParam {
-    id: ID!
+    id: ID
     name: String
     age: Int
   }

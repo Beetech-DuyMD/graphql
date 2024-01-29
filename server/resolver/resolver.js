@@ -6,9 +6,9 @@ const resolvers = {
       return await Book.findAll();
     },
 
-    book: (parent, args) => {
+    book: async (parent, args) => {
       const { id } = args.input;
-      return Book.findOne({ where: { id: id } });
+      return await Book.findOne({ where: { id: id } });
     },
 
     authors: async (parent, args) => {
