@@ -1,14 +1,31 @@
+import { useMutation } from "@apollo/client";
 import { DevTool } from "@hookform/devtools";
 import { useForm } from "react-hook-form";
+import { registerUser } from "../../graphql-client/mutation";
 
 export default function RegisterForm() {
   const form = useForm();
-  const { register, control, handleSubmit, formState } = form;
+  const { register, control, handleSubmit, formState, reset } = form;
   const { errors } = formState;
+  const [addUser, dataMutation] = useMutation(registerUser)
 
   const handleFormSubmit = (data) => {
-    console.log(data);
-    // console.log(data);
+    try {
+      addUser({
+        variables: { input: { user_name: data.username, email: data.email, password: data.password } },
+        onError: (err) => {
+          console.log(err.message);
+        },
+        onCompleted: () => {
+          // Reset giá trị chỉ khi mutation thành công
+          reset();
+        }
+      })
+      reset()
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
+
   };
   return (
     <div>
@@ -41,6 +58,29 @@ export default function RegisterForm() {
                     id="username"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Nhập username"
+                  />
+                  <span className="text-red-600">
+                    {errors.username?.message}
+                  </span>
+                </div>
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Your Email
+                  </label>
+                  <input
+                    {...register("email", {
+                      required: {
+                        value: true,
+                        message: "UserName không được để trống",
+                      },
+                    })}
+                    type="email"
+                    id="email"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Nhập email"
                   />
                   <span className="text-red-600">
                     {errors.username?.message}

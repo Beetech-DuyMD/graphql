@@ -1,3 +1,4 @@
+const { ApolloError } = require("apollo-server-express") ;
 const { Author, Book, User } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -71,8 +72,7 @@ const resolvers = {
         });
 
         if (oldUser) {
-          console.log(oldUser);
-          return "Email : " + input.email + " đã tồn tại";
+          throw new ApolloError('Email : ' + input.email +' đã tồn tại')
         }
         let encryptedPassword = await bcrypt.hash(input.password, 10);
         console.log(encryptedPassword);

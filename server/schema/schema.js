@@ -29,7 +29,7 @@ const typeDefs = gql`
   }
 
   type User{
-    username: String
+    user_name: String
     email: String
     password: String
     token: String
