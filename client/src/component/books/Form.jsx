@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { getAuthors, getBooks } from "../graphql-client/queries";
+import { getAuthors, getBooks } from "../../graphql-client/queries";
 import { useMutation, useQuery } from "@apollo/client";
-import { createAuthor, createBook } from "../graphql-client/mutation";
+import { createAuthor, createBook } from "../../graphql-client/mutation";
+// import { createAuthor, createBook } from "../../graphql-client/mutation";
 
 export default function Form() {
   const [addBook, dataMutation] = useMutation(createBook);

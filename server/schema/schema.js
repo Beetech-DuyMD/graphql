@@ -27,6 +27,24 @@ const typeDefs = gql`
     name: String
     age: Int
   }
+
+  type User{
+    username: String
+    email: String
+    password: String
+    token: String
+  }
+
+  input RegisterInput{
+    user_name: String
+    email: String
+    password: String
+  }
+
+  type LoginInput{
+    email: String
+    password: String
+  }
   #root type
   type Query {
     books: [Book]
@@ -41,6 +59,8 @@ const typeDefs = gql`
     createBook(input: BookParam): Book
     updateBook(id: ID!, input: BookParam): Book
     deleteBook(id: ID): String
+    # USER
+    registerUser(input: RegisterInput) : User
   }
 `;
 

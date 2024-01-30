@@ -1,8 +1,8 @@
-import { getBooks } from "../graphql-client/queries";
+import { getBooks } from "../../graphql-client/queries";
 import BookDetail from "./BookDetail";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { deleteBook } from "../graphql-client/mutation";
+import { deleteBook } from "../../graphql-client/mutation";
 import UpdateBook from "./UpdateBook";
 
 export default function BookList() {

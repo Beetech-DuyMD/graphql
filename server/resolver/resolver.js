@@ -1,4 +1,6 @@
-const { Author, Book } = require("../models");
+const { Author, Book, User } = require("../models");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 const resolvers = {
   Query: {
@@ -48,7 +50,7 @@ const resolvers = {
           id: args.id,
         },
       });
-      return newBook
+      return newBook;
     },
     deleteBook: async (parent, args) => {
       await Book.destroy({
@@ -57,6 +59,46 @@ const resolvers = {
         },
       });
       return "Xóa thành công";
+    },
+
+    // USERRRRRRRRRRRRR
+    registerUser: async (parent, args) => {
+      try {
+        const { input } = args;
+
+        const oldUser = await User.findOne({
+          where: { email: input.email },
+        });
+
+        if (oldUser) {
+          console.log(oldUser);
+          return "Email : " + input.email + " đã tồn tại";
+        }
+        let encryptedPassword = await bcrypt.hash(input.password, 10);
+        console.log(encryptedPassword);
+        const newUser = new User({
+          user_name: input.user_name,
+          email: input.email.toLowerCase(),
+          password: encryptedPassword,
+        });
+        const token = jwt.sign(
+          {
+            user_id: newUser._id,
+            email: input.email,
+          },
+          "UNSAFE SRING",
+          {
+            expiresIn: "2h",
+          }
+        );
+
+        newUser.token = token;
+
+        const res = newUser.save();
+        return res;
+      } catch (error) {
+        console.log(error.message);
+      }
     },
   },
 };

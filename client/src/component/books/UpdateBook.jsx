@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { getDetailBook, getAuthors, getBooks } from "../graphql-client/queries";
+import { getDetailBook, getAuthors, getBooks } from "../../graphql-client/queries";
 import { DevTool } from "@hookform/devtools";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
-import { updateBook } from "../graphql-client/mutation";
+import { updateBook } from "../../graphql-client/mutation";
 import BookList from "./BookList";
 
 export default function UpdateBook(props) {

@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { getDetailBook } from "../graphql-client/queries";
+import { getDetailBook } from "../../graphql-client/queries";
 
 export default function BookDetail(props) {
   const { bookId } = props;
