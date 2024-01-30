@@ -14,10 +14,11 @@ export const getBooks = gql `
 export const getDetailBook = gql `
   query getDetailBook($input: BookParam) {
     book(input: $input) {
+    id
     name
     gengre
-    id
     author {
+      id
       name
       books {
         name

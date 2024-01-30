@@ -42,6 +42,22 @@ const resolvers = {
       const newBook = await Book.create(args.input);
       return newBook;
     },
+    updateBook: async (parent, args) => {
+      const newBook = await Book.update(args.input, {
+        where: {
+          id: args.id,
+        },
+      });
+      return newBook
+    },
+    deleteBook: async (parent, args) => {
+      await Book.destroy({
+        where: {
+          id: args.id,
+        },
+      });
+      return "Xóa thành công";
+    },
   },
 };
 

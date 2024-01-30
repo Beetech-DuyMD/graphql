@@ -39,6 +39,8 @@ const typeDefs = gql`
   type Mutation {
     createAuthor(input: AuthorParam): Author
     createBook(input: BookParam): Book
+    updateBook(id: ID!, input: BookParam): Book
+    deleteBook(id: ID): String
   }
 `;
 

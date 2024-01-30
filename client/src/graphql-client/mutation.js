@@ -1,19 +1,31 @@
-import {
-    gql
-} from "@apollo/client";
+import { gql } from "@apollo/client";
 
-export const createBook = gql `
-mutation createBook($input: BookParam) {
-  createBook(input: $input) {
-    name
+export const createBook = gql`
+  mutation createBook($input: BookParam) {
+    createBook(input: $input) {
+      name
+    }
   }
-}
-`
+`;
 
-export const createAuthor = gql `
-mutation createAuthor($input: AuthorParam) {
-  createAuthor(input: $input) {
-    name
+export const createAuthor = gql`
+  mutation createAuthor($input: AuthorParam) {
+    createAuthor(input: $input) {
+      name
+    }
   }
-}
-`
+`;
+
+export const deleteBook = gql`
+  mutation deleteBook($deleteBookId: ID) {
+    deleteBook(id: $deleteBookId)
+  }
+`;
+
+export const updateBook = gql`
+  mutation updateBook($updateBookId: ID!, $input: BookParam) {
+    updateBook(id: $updateBookId, input: $input) {
+      name
+    }
+  }
+`;

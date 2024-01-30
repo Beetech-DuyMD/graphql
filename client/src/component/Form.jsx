@@ -1,75 +1,77 @@
 import { useState } from "react";
 import { getAuthors, getBooks } from "../graphql-client/queries";
 import { useMutation, useQuery } from "@apollo/client";
-import { createAuthor, createBook } from "../graphql-client/mutation"
+import { createAuthor, createBook } from "../graphql-client/mutation";
 
 export default function Form() {
-  const [addBook, dataMutation] = useMutation(createBook)
-  const [addAuthor, dataMutationAutor] = useMutation(createAuthor)
-  const { loading, error, data } = useQuery(getAuthors)
-  
-  const [newBook, setNewBook] = useState(
-    {
-      name: '',
-      gengre: '',
-      authorId: ''
-    }
-  )
-  const [newAuthor, setNewAuthor] = useState(
-    {
-      name: '',
-      age: ''
-    }
-  )
+  const [addBook, dataMutation] = useMutation(createBook);
+  const [addAuthor, dataMutationAutor] = useMutation(createAuthor);
+  const { loading, error, data } = useQuery(getAuthors);
+
+  const [newBook, setNewBook] = useState({
+    name: "",
+    gengre: "",
+    authorId: "",
+  });
+  const [newAuthor, setNewAuthor] = useState({
+    name: "",
+    age: "",
+  });
 
   const handleChangeAuthor = (e) => {
     setNewAuthor({
       ...newAuthor,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleSubmitAuthor = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     addAuthor({
-      variables: { input: { name: newAuthor.name, age: parseInt(newAuthor.age) } },
-      refetchQueries: [{ query: getAuthors }]
-    })
+      variables: {
+        input: { name: newAuthor.name, age: parseInt(newAuthor.age) },
+      },
+      refetchQueries: [{ query: getAuthors }],
+    });
     setNewAuthor({
-      name: '',
-      age: ''
-    })
-  }
+      name: "",
+      age: "",
+    });
+  };
 
   const handleChange = (e) => {
     setNewBook({
       ...newBook,
-      [e.target.name]: e.target.value
-    })
-
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     addBook({
-      variables: { input: { name: newBook.name, gengre: newBook.gengre, authorId: newBook.authorId } },
-      refetchQueries: [{ query: getBooks }]
-    })
+      variables: {
+        input: {
+          name: newBook.name,
+          gengre: newBook.gengre,
+          authorId: newBook.authorId,
+        },
+      },
+      refetchQueries: [{ query: getBooks }],
+    });
     setNewBook({
-      name: '',
-      gengre: '',
-      authorId: ''
-    })
-  }
-  
+      name: "",
+      gengre: "",
+      authorId: "",
+    });
+  };
+
   if (loading) return " loading Book";
   if (error) return " error Book";
-  const { authors } = data
+  const { authors } = data;
 
   return (
     <div className="grid grid-cols-2 gap-4">
       <div>
-
-        <form action="" onSubmit={e => handleSubmit(e)}>
+        <form action="" onSubmit={(e) => handleSubmit(e)}>
           <div>
             <div className="grid gap-6 mb-6 md:grid-cols-2">
               <div>
@@ -86,7 +88,7 @@ export default function Form() {
                   id="name-book"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Nhập tên sách"
-                  onChange={e => handleChange(e)}
+                  onChange={(e) => handleChange(e)}
                   required
                 ></input>
               </div>
@@ -106,24 +108,25 @@ export default function Form() {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Nhập số trang"
                   required
-                  onChange={e => handleChange(e)}
+                  onChange={(e) => handleChange(e)}
                 ></input>
               </div>
 
               <select
-                onChange={e => handleChange(e)}
+                onChange={(e) => handleChange(e)}
                 name="authorId"
                 id="author"
                 value={newBook.authorId}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
-                <option value='' selected disabled>
+                <option value="" selected disabled>
                   Choose a Author
                 </option>
-                {authors.map(author => (
-                  <option key={author.id} value={author.id}>{author.name}</option>
+                {authors.map((author) => (
+                  <option key={author.id} value={author.id}>
+                    {author.name}
+                  </option>
                 ))}
-
               </select>
             </div>
             <button
@@ -137,7 +140,7 @@ export default function Form() {
       </div>
 
       <div>
-        <form action="" onSubmit={e => handleSubmitAuthor(e)}>
+        <form action="" onSubmit={(e) => handleSubmitAuthor(e)}>
           <div>
             <div className="grid gap-6 mb-6 md:grid-cols-2">
               <div>
@@ -155,7 +158,7 @@ export default function Form() {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Nhập tên sách"
                   required
-                  onChange={e => handleChangeAuthor(e)}
+                  onChange={(e) => handleChangeAuthor(e)}
                 ></input>
               </div>
 
@@ -174,7 +177,7 @@ export default function Form() {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Nhập số tuổi"
                   required
-                  onChange={e => handleChangeAuthor(e)}
+                  onChange={(e) => handleChangeAuthor(e)}
                 ></input>
               </div>
             </div>
