@@ -1,7 +1,7 @@
-const { ApolloError } = require("apollo-server-express") ;
 const { Author, Book, User } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { GraphQLError } = require("graphql");
 
 const resolvers = {
   Query: {
@@ -21,6 +21,11 @@ const resolvers = {
     author: (parent, args) => {
       const { id } = args.input;
       return Author.findOne({ where: { id: id } });
+    },
+
+    user: (parent, args) => {
+      const { id } = args.id;
+      return User.findOne({ where: { id: id } });
     },
   },
 
@@ -65,26 +70,26 @@ const resolvers = {
     // USERRRRRRRRRRRRR
     registerUser: async (parent, args) => {
       try {
-        const { input } = args;
+        const { email, user_name, password } = args.input;
 
         const oldUser = await User.findOne({
-          where: { email: input.email },
+          where: { email: email },
         });
 
         if (oldUser) {
-          throw new ApolloError('Email : ' + input.email +' đã tồn tại')
+          throw new GraphQLError("Email : " + email + " đã tồn tại");
         }
-        let encryptedPassword = await bcrypt.hash(input.password, 10);
+        let encryptedPassword = await bcrypt.hash(password, 10);
         console.log(encryptedPassword);
         const newUser = new User({
-          user_name: input.user_name,
-          email: input.email.toLowerCase(),
+          user_name: user_name,
+          email: email.toLowerCase(),
           password: encryptedPassword,
         });
         const token = jwt.sign(
           {
             user_id: newUser._id,
-            email: input.email,
+            email: email,
           },
           "UNSAFE SRING",
           {
@@ -93,11 +98,38 @@ const resolvers = {
         );
 
         newUser.token = token;
-
         const res = newUser.save();
         return res;
       } catch (error) {
-        console.log(error.message);
+        throw new GraphQLError(error.message);
+      }
+    },
+
+    loginUser: async (parent, args) => {
+      try {
+        const { email, password } = args.input;
+        const user = await User.findOne({ where: { email: email } });
+        console.log(12312312);
+        if (user && (await bcrypt.compare(password, user.password))) {
+          const token = jwt.sign(
+            {
+              user_id: user._id,
+              email: email,
+            },
+            "UNSAFE SRING",
+            {
+              expiresIn: "2h",
+            }
+          );
+          user.token = token;
+          console.log(user.token);
+
+          return user;
+        } else {
+          throw new GraphQLError("Vui lòng kiểm tra lại thông tin");
+        }
+      } catch (error) {
+        throw new GraphQLError(error);
       }
     },
   },

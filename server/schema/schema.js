@@ -41,16 +41,18 @@ const typeDefs = gql`
     password: String
   }
 
-  type LoginInput{
+  input LoginInput{
     email: String
     password: String
   }
+  
   #root type
   type Query {
     books: [Book]
     book(input: BookParam): Book
     authors: [Author]
     author(input: AuthorParam): Author
+    user(id: ID!): User
   }
 
   # Mutation
@@ -61,6 +63,8 @@ const typeDefs = gql`
     deleteBook(id: ID): String
     # USER
     registerUser(input: RegisterInput) : User
+    loginUser(input: LoginInput) : User
+
   }
 `;
 

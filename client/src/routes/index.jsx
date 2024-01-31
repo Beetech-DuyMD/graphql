@@ -1,26 +1,45 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
 import LoginForm from "../component/auth/loginForm";
 import RegisterForm from "../component/auth/RegisterForm";
 import Auth from "../component/auth";
 import Books from "../component/books";
+import { AuthChecker } from "../component/AuthChecker/AuthChecker";
+import Layout from "../component/layout/Layout";
+import Author from "../component/Author/Author";
 
 export default createBrowserRouter([
-    {
-      element: <Auth />,
-      children: [
-        {
-          element: <LoginForm />,
-          path: "/login",
-        },
-        {
-          element: <RegisterForm />,
-          path: "/register",
-        },
-      ],
-    },
-    {
-      element: <Books />,
-      path: "/books",
-    },
-  ]);
+  {
+    element: <Auth />,
+    children: [
+      {
+        element: (
+          <AuthChecker>
+            <LoginForm />
+          </AuthChecker>
+        ),
+        path: "/login",
+      },
+      {
+        element: <RegisterForm />,
+        path: "/register",
+      },
+    ],
+  },
+  {
+    element: (
+      <AuthChecker>
+        <Layout />
+      </AuthChecker>
+    ),
+    children: [
+      {
+        element: <Books />,
+        path: "/books",
+      },
+      {
+        element: <Author />,
+        path: "/authors",
+      },
+    ],
+  },
+]);

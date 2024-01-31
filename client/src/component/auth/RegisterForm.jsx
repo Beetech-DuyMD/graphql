@@ -2,28 +2,29 @@ import { useMutation } from "@apollo/client";
 import { DevTool } from "@hookform/devtools";
 import { useForm } from "react-hook-form";
 import { registerUser } from "../../graphql-client/mutation";
-
+import {toast} from 'react-toastify'
+import { useNavigate } from "react-router-dom";
 export default function RegisterForm() {
   const form = useForm();
   const { register, control, handleSubmit, formState, reset } = form;
   const { errors } = formState;
   const [addUser, dataMutation] = useMutation(registerUser)
+  const navigate = useNavigate();
 
   const handleFormSubmit = (data) => {
     try {
       addUser({
         variables: { input: { user_name: data.username, email: data.email, password: data.password } },
-        onError: (err) => {
-          console.log(err.message);
+        onError: (errors) => {
+          toast.error(errors.message)
         },
         onCompleted: () => {
-          // Reset giá trị chỉ khi mutation thành công
-          reset();
+           toast.success(123213)
+           navigate("/login")
         }
-      })
-      reset()
+      })  
     } catch (error) {
-      console.error('Error adding user:', error);
+      toast.error(error.message)
     }
 
   };

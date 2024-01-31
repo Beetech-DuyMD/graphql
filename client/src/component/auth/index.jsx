@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { AuthChecker } from "../AuthChecker/AuthChecker";
 
 function Auth() {
   return (
