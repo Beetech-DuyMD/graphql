@@ -29,9 +29,7 @@ export default function Layout() {
         )}
       </div>
 
-      {/* <AuthChecker> */}
         <Outlet />
-      {/* </AuthChecker> */}
       <h1 className="bg-slate-800">FOOTER</h1>
     </div>
   );

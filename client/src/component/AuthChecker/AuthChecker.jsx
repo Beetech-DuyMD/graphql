@@ -2,11 +2,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import jsonwebtoken from 'jsonwebtoken'
 
 const AuthContext = createContext();
 
-export const AuthChecker = ({ children, checkAuth }) => {
+export const AuthChecker = ({ children }) => {
   const navigate = useNavigate();
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -14,22 +13,18 @@ export const AuthChecker = ({ children, checkAuth }) => {
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      const token = localStorage.getItem("token") ? localStorage.getItem("token") : "";
+      const token = localStorage.getItem("token")
+        ? localStorage.getItem("token")
+        : "";
 
       if (token) {
         try {
-          const authenticated = await checkAuth(token);
-
-          if (authenticated) {
-            setIsAuthenticated(true);
-            if (["/login", "/register"].includes(location.pathname)) {
-              navigate("/books");
-            }
-          } else {
-            // Redirect to login if authentication fails
-            navigate("/login");
-            toast.error("Vui lòng đăng nhập");
+          setIsAuthenticated(true);
+          if (["/login", "/register"].includes(location.pathname)) {
+            navigate("/books");
           }
+        } catch {
+          throw new Error("Token not found");
         } finally {
           setIsAuthChecked(true); // Kiểm tra xác thực đã hoàn tất
         }
@@ -38,13 +33,12 @@ export const AuthChecker = ({ children, checkAuth }) => {
           toast.error("Vui lòng đăng nhập");
           navigate("/login");
         }
-
         setIsAuthChecked(true); // Kiểm tra xác thực đã hoàn tất
       }
     };
 
     checkAuthentication();
-  }, [navigate, checkAuth, location]);
+  }, [navigate]);
 
   if (!isAuthChecked) {
     // Bạn có thể chọn hiển thị một biểu tượng loading hoặc giao diện khác trong khi kiểm tra xác thực đang được thực hiện.

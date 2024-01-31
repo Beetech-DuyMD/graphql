@@ -9,14 +9,14 @@ import Author from "../component/Author/Author";
 
 export default createBrowserRouter([
   {
-    element: <Auth />,
+    element: (
+      <AuthChecker>
+        <Auth />
+      </AuthChecker>
+    ),
     children: [
       {
-        element: (
-          <AuthChecker>
-            <LoginForm />
-          </AuthChecker>
-        ),
+        element: <LoginForm />,
         path: "/login",
       },
       {
