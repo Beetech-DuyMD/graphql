@@ -35,6 +35,12 @@ const typeDefs = gql`
     token: String
   }
 
+  type UserToken{
+    user_name: String
+    email: String
+    user_id: Int
+  }
+
   input RegisterInput{
     user_name: String
     email: String
@@ -53,6 +59,8 @@ const typeDefs = gql`
     authors: [Author]
     author(input: AuthorParam): Author
     user(id: ID!): User
+    userByToken(token: String!): UserToken
+
   }
 
   # Mutation

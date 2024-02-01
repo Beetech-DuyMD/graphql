@@ -27,6 +27,21 @@ const resolvers = {
       const { id } = args.id;
       return User.findOne({ where: { id: id } });
     },
+
+    userByToken: (parent, args) => {
+      const { token } = args;
+      try {
+        const user = jwt.verify(token, "UNSAFE SRING", (err, user) => {
+          if (err) {
+            throw new AuthenticationError("Invalid Token");
+          }
+          return user;
+        });
+        return user;
+      } catch (error) {
+        throw new AuthenticationError("Invalid or Expired Token");
+      }
+    },
   },
 
   Book: {
@@ -50,8 +65,7 @@ const resolvers = {
       const newBook = await Book.create(args.input);
       return newBook;
     },
-    updateBook: async (parent, args,context) => {
-
+    updateBook: async (parent, args, context) => {
       const newBook = await Book.update(args.input, {
         where: {
           id: args.id,
