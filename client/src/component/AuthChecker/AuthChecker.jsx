@@ -1,53 +1,64 @@
-// AuthContext.js
+import { jwtDecode } from "jwt-decode";
 import { createContext, useContext, useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const AuthContext = createContext();
+export const AuthContext = createContext({
+  user: null,
+});
 
 export const AuthChecker = ({ children }) => {
   const navigate = useNavigate();
-  const [isAuthChecked, setIsAuthChecked] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const location = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      const token = localStorage.getItem("token")
-        ? localStorage.getItem("token")
-        : "";
+      const token = localStorage.getItem("token") || "";
 
-      if (token) {
-        try {
-          setIsAuthenticated(true);
-          if (["/login", "/register"].includes(location.pathname)) {
-            navigate("/books");
+      try {
+        if (token) {
+          console.log(12323);
+          const decodedToken = jwtDecode(token);
+          
+          if (decodedToken.exp * 1000 < Date.now()) {
+            // Token has expired
+            console.log(546546546);
+            localStorage.removeItem("token");
+            setIsAuthenticated(false);
+            navigate("/login");
+          } else {
+            setIsAuthenticated(true);
+            setUser(decodedToken);
           }
-        } catch {
-          throw new Error("Token not found");
-        } finally {
-          setIsAuthChecked(true); // Kiểm tra xác thực đã hoàn tất
+        } else {
+          setIsAuthenticated(false);
+          if (!["/login", "/books", "/register"].includes(location.pathname)) {
+            toast.error("Vui lòng đăng nhập");
+            navigate("/login");
+          }
         }
-      } else {
-        if (!["/login", "/books"].includes(location.pathname)) {
-          toast.error("Vui lòng đăng nhập");
-          navigate("/login");
-        }
-        setIsAuthChecked(true); // Kiểm tra xác thực đã hoàn tất
+      } catch (error) {
+        console.error("Error decoding token:", error.message);
+        // Invalid token, remove it and redirect to login
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+        navigate("/login");
       }
     };
 
     checkAuthentication();
   }, [navigate]);
 
-  if (!isAuthChecked) {
-    // Bạn có thể chọn hiển thị một biểu tượng loading hoặc giao diện khác trong khi kiểm tra xác thực đang được thực hiện.
+  if (
+    !isAuthenticated &&
+    !["/login", "/books", "/register"].includes(location.pathname)
+  ) {
     return null;
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );
 };

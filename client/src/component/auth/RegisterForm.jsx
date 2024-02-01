@@ -19,7 +19,7 @@ export default function RegisterForm() {
           toast.error(errors.message)
         },
         onCompleted: () => {
-           toast.success(123213)
+           toast.success("Đăng kí thành công")
            navigate("/login")
         }
       })  

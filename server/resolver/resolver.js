@@ -50,7 +50,8 @@ const resolvers = {
       const newBook = await Book.create(args.input);
       return newBook;
     },
-    updateBook: async (parent, args) => {
+    updateBook: async (parent, args,context) => {
+
       const newBook = await Book.update(args.input, {
         where: {
           id: args.id,
@@ -109,12 +110,12 @@ const resolvers = {
       try {
         const { email, password } = args.input;
         const user = await User.findOne({ where: { email: email } });
-        console.log(12312312);
         if (user && (await bcrypt.compare(password, user.password))) {
           const token = jwt.sign(
             {
-              user_id: user._id,
+              user_id: user.id,
               email: email,
+              user_name: user.user_name,
             },
             "UNSAFE SRING",
             {
@@ -122,8 +123,6 @@ const resolvers = {
             }
           );
           user.token = token;
-          console.log(user.token);
-
           return user;
         } else {
           throw new GraphQLError("Vui lòng kiểm tra lại thông tin");

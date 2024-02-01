@@ -16,7 +16,6 @@ const httpLink = createHttpLink({
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("token");
-  console.log(token); // Lấy token từ nơi bạn lưu trữ nó
   return {
     headers: {
       ...headers,
@@ -24,12 +23,12 @@ const authLink = setContext((_, { headers }) => {
     },
   };
 });
-
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
+console.log(client);
 function App() {
   return (
     <ApolloProvider client={client}>
