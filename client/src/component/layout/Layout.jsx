@@ -1,12 +1,12 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { AuthChecker, AuthContext } from "../AuthChecker/AuthChecker";
 import { useContext, useState } from "react";
+import Fake from "../feke";
 
 export default function Layout() {
-  const { user } = useContext(AuthContext);
-
+  const  user  = useContext(AuthContext);
+ 
   const navigate = useNavigate();
-
   const [token, setToken] = useState(() => {
     return localStorage.getItem("token") ? localStorage.getItem("token") : "";
   });
@@ -15,13 +15,14 @@ export default function Layout() {
     setToken("");
     navigate("/login");
   };
+ 
   return (  
     <div>
       <div>
         {token ? (
           <div className="px-4">
             <button onClick={logout}>Logout</button>
-            <span className="ms-3">{user?.user_name}</span>
+            <span className="ms-3">{user?.userByToken?.user_name}</span>
           </div>
         ) : (
           <div>

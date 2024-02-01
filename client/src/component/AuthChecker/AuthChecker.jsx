@@ -1,7 +1,8 @@
-import { jwtDecode } from "jwt-decode";
+import { useQuery } from "@apollo/client";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { userByToken } from "../../graphql-client/queries";
 
 export const AuthContext = createContext({
   user: null,
@@ -10,55 +11,44 @@ export const AuthContext = createContext({
 export const AuthChecker = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [user, setUser] = useState();
 
+  const token = localStorage.getItem("token") || "";
+  // if(token) {
+  const { loading, error, data } = useQuery(userByToken, {
+    variables: { token: token },
+    skip: !token,
+    onCompleted : () => {
+      console.log(data);
+    }
+  });
+  
   useEffect(() => {
-    const checkAuthentication = async () => {
-      const token = localStorage.getItem("token") || "";
-
-      try {
-        if (token) {
-          console.log(12323);
-          const decodedToken = jwtDecode(token);
-          
-          if (decodedToken.exp * 1000 < Date.now()) {
-            // Token has expired
-            console.log(546546546);
-            localStorage.removeItem("token");
-            setIsAuthenticated(false);
-            navigate("/login");
-          } else {
-            setIsAuthenticated(true);
-            setUser(decodedToken);
-          }
-        } else {
-          setIsAuthenticated(false);
-          if (!["/login", "/books", "/register"].includes(location.pathname)) {
-            toast.error("Vui lòng đăng nhập");
-            navigate("/login");
-          }
+    try {
+      if (!data) {
+        if (!["/books","/register"].includes(location.pathname)) {
+          navigate("/login");
         }
-      } catch (error) {
-        console.error("Error decoding token:", error.message);
-        // Invalid token, remove it and redirect to login
-        localStorage.removeItem("token");
-        setIsAuthenticated(false);
-        navigate("/login");
+        // navigate("/books");
       }
-    };
+      else if(token && ["/login","/register"].includes(location.pathname)){
+        console.log(345345345);
+          navigate("/books");
+      }
+    } catch (error) {
+      console.error("Error decoding token:", error.message);
+      // Invalid token, remove it and redirect to login
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
+  }, [data]);
 
-    checkAuthentication();
-  }, [navigate]);
-
-  if (
-    !isAuthenticated &&
-    !["/login", "/books", "/register"].includes(location.pathname)
-  ) {
-    return null;
+  if (loading) return "Đang load";
+  if (error) {
+    localStorage.removeItem("token");
+    navigate("/login");
   }
 
-  return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
 };
